@@ -7,7 +7,7 @@ const markdownRender = require('./renders/markdown');
 const ptFolder = `${__dirname}/pt`;
 const enFolder = `${__dirname}/en`;
 
-const publishFolder = `${__dirname}/public`;
+const publishFolder = `${__dirname}/docs`;
 
 const ptFiles = fs.readdirSync(ptFolder);
 
