@@ -1,8 +1,11 @@
 const fs = require('fs');
+const crypto = require('crypto');
 
 const mathRender = require('./renders/math');
 const plantUmlRender = require('./renders/plantuml');
 const markdownRender = require('./renders/markdown');
+
+const control = require('./docs/control.json');
 
 const ptFolder = `${__dirname}/pt`;
 const enFolder = `${__dirname}/en`;
@@ -35,9 +38,25 @@ const main = async () => {
 
         const mathRendered = await mathRender(page);
         const graphRendered = await plantUmlRender(mathRendered);
-    
-        fs.writeFileSync(`${publishFolder}/${file}.html`, graphRendered, );
+
+        const hash = crypto.createHash('sha1').update(graphRendered).digest('base64');
+        
+        const foundPublication = control.publications[file];
+
+        if (foundPublication) {
+          const lastVersion = foundPublication[foundPublication.length - 1];
+
+          if (lastVersion.hash === hash) continue;
+
+          foundPublication.push({ hash, date: new Date() });
+        } else {
+          control.publications[file] = [{ hash, date: new Date() }];
+        }
+
+        fs.writeFileSync(`${publishFolder}/${file}.html`, graphRendered);
     }
+
+    fs.writeFileSync('./docs/control.json', JSON.stringify(control));
 }
 
 main().catch(err => console.log(err));

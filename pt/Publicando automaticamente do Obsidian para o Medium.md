@@ -50,5 +50,5 @@ Other inline <equation>P = {(I_i, I_j) | I_i \cap I_j = \emptyset}</equation>
 ```js
     var test = "string"
 
-    console.log('Code rendering')
+    console.log('Code rendering test')
 ```
