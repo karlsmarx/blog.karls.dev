@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>karls.dev</title>
+        <link>http://example.com/</link>
+        <description>karls.dev feed</description>
+        <lastBuildDate>Tue, 05 Nov 2024 08:53:37 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>pt-BR</language>
+        <item>
+            <title><![CDATA[Publicando automaticamente do Obsidian para o Medium]]></title>
+            <pubDate>Tue, 05 Nov 2024 08:53:37 GMT</pubDate>
+            <author>contato@karls.dev (Karl Alexander)</author>
+        </item>
+    </channel>
+</rss>

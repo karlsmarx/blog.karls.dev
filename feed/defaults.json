@@ -1,0 +1,25 @@
+{
+    "feed": {
+        "title": "karls.dev",
+        "description": "karls.dev feed",
+        "id": "http://example.com/",
+        "link": "http://example.com/",
+        "language": "pt-BR",
+        "feedLinks": {
+            "json": "https://karls.dev/feed/json",
+            "atom": "https://karls.dev/feed/atom"
+        },
+        "author": {
+            "name": "Karl Alexander",
+            "email": "contato@karls.dev",
+            "link": "https://karls.dev"
+        }
+    },
+    "post": {
+        "author": [{
+            "name": "Karl Alexander",
+            "email": "contato@karls.dev",
+            "link": "https://karls.dev"
+        }]
+    }
+}

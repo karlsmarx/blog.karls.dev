@@ -1,0 +1,21 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "karls.dev",
+    "home_page_url": "http://example.com/",
+    "feed_url": "https://karls.dev/feed/json",
+    "description": "karls.dev feed",
+    "author": {
+        "name": "Karl Alexander",
+        "url": "https://karls.dev"
+    },
+    "items": [
+        {
+            "title": "Publicando automaticamente do Obsidian para o Medium",
+            "date_modified": "2024-11-05T08:53:37.809Z",
+            "author": {
+                "name": "Karl Alexander",
+                "url": "https://karls.dev"
+            }
+        }
+    ]
+}

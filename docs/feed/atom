@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>http://example.com/</id>
+    <title>karls.dev</title>
+    <updated>2024-11-05T08:53:37.817Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <author>
+        <name>Karl Alexander</name>
+        <email>contato@karls.dev</email>
+        <uri>https://karls.dev</uri>
+    </author>
+    <link rel="alternate" href="http://example.com/"/>
+    <link rel="self" href="https://karls.dev/feed/atom"/>
+    <subtitle>karls.dev feed</subtitle>
+    <entry>
+        <title type="html"><![CDATA[Publicando automaticamente do Obsidian para o Medium]]></title>
+        <id/>
+        <link/>
+        <updated>2024-11-05T08:53:37.809Z</updated>
+        <author>
+            <name>Karl Alexander</name>
+            <email>contato@karls.dev</email>
+            <uri>https://karls.dev</uri>
+        </author>
+    </entry>
+</feed>

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "feed": "^4.2.2",
     "jsdom": "^25.0.1",
     "katex": "^0.16.11",
     "node-plantuml": "^0.9.0",

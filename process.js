@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const mathRender = require('./renders/math');
 const plantUmlRender = require('./renders/plantuml');
 const markdownRender = require('./renders/markdown');
+const feedRender = require('./feed/generate');
 
 const control = require('./docs/control.json');
 
@@ -14,49 +15,87 @@ const publishFolder = `${__dirname}/docs`;
 
 const ptFiles = fs.readdirSync(ptFolder);
 
-const pageDefaults = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
-  </head>
-  <body>
-  <h1>{{title}}</h1>
-  {{body}}
-  </body>
-</html>`
+const getRender = async (markdown) => {
+  const html = markdownRender(markdown);
+  const mathRendered = await mathRender(html);
+  const graphRendered = await plantUmlRender(mathRendered);
+
+  return graphRendered
+}
+
+const renderFiles = async (folder, template) => {
+  const files = fs.readdirSync(folder);
+
+  const pages = await Promise.all(files.map(async (file) => {
+    const markdownData = fs.readFileSync(`${folder}/${file}`, 'utf-8');
+    const rendered = await getRender(markdownData);
+
+    const title = file.replace('.md', '');
+    const urlParsed = title.replaceAll(' ', '-').toLowerCase();
+
+    const content = template
+      .replace('{{title}}', title)
+      .replace('{{body}}', rendered);
+
+    return { content, title, urlParsed, file };
+  }))
+
+  return pages;
+}
+
+const renderIndex = (template, pages) => {
+  const body = pages
+    .map((page) => `<a href='${page.url}.html'>${page.title}</a>`)
+    .join();
+
+  const content = template
+    .replace('{{title}}', 'Posts')
+    .replace('{{body}}', body);
+
+  return content;
+}
 
 const main = async () => {
-    for (let file of ptFiles) {
-        const markdownData = fs.readFileSync(`${ptFolder}/${file}`, 'utf-8');
+  const pageTemplate = fs.readFileSync(`${__dirname}/page-template.html`, 'utf-8');
+  const pages = await renderFiles(ptFolder, pageTemplate);
 
-        const htmlData = markdownRender(markdownData);
-    
-        const page = pageDefaults
-            .replace('{{title}}', file.replace('.md', ''))
-            .replace('{{body}}', htmlData);
+  const index = [];
+  const feed = [];
 
-        const mathRendered = await mathRender(page);
-        const graphRendered = await plantUmlRender(mathRendered);
+  await Promise.all(pages.map(async (page) => {
+    index.push({ title: page.title, url: `./${page.urlParsed}` });
 
-        const hash = crypto.createHash('sha1').update(graphRendered).digest('base64');
-        
-        const foundPublication = control.publications[file];
+    const feedData = { title: page.title, id: `./${page.urlParsed}`, link: `./${page.urlParsed}` };
 
-        if (foundPublication) {
-          const lastVersion = foundPublication[foundPublication.length - 1];
+    const hash = crypto.createHash('sha1').update(page.content).digest('base64');
+    const foundPublication = control.publications[page.file];
 
-          if (lastVersion.hash === hash) continue;
+    if (foundPublication) {
+      const lastVersion = foundPublication[foundPublication.length - 1];
 
-          foundPublication.push({ hash, date: new Date() });
-        } else {
-          control.publications[file] = [{ hash, date: new Date() }];
-        }
+      // Skip writes for published files without changes
+      if (lastVersion.hash === hash) return;
 
-        fs.writeFileSync(`${publishFolder}/${file}.html`, graphRendered);
+      foundPublication.push({ hash, date: new Date() });
+    } else {
+      control.publications[page.file] = [{ hash, date: new Date() }];
     }
 
-    fs.writeFileSync('./docs/control.json', JSON.stringify(control));
+    feedData.date = control.publications[page.file][0].date;
+    feed.push(feedData);
+
+    fs.writeFileSync(`${publishFolder}/${page.urlParsed}.html`, page.content);
+  }))
+
+  const indexContent = renderIndex(pageTemplate, index);
+  fs.writeFileSync('./docs/index.html', indexContent);
+
+  const feedContent = feedRender(feed);
+  fs.writeFileSync('./docs/feed/json', feedContent.json);
+  fs.writeFileSync('./docs/feed/atom', feedContent.atom);
+  fs.writeFileSync('./docs/feed/rss', feedContent.xml);
+
+  fs.writeFileSync('./docs/control.json', JSON.stringify(control));
 }
 
 main().catch(err => console.log(err));
